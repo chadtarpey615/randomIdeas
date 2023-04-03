@@ -1,0 +1,22 @@
+{
+  "name": "randomideas",
+  "version": "1.0.0",
+  "description": "Idea Sharing app",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chadtarpey615/randomIdeas.git"
+  },
+  "author": "Chad",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/chadtarpey615/randomIdeas/issues"
+  },
+  "homepage": "https://github.com/chadtarpey615/randomIdeas#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
