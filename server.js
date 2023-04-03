@@ -1,61 +1,21 @@
 const express = require("express")
 const port = 5000
 const app = express()
+const ideasRouter = require("./routes/ideas")
 
 
-const ideas = [
-    {
-        id: 1,
-        text: "Positive Newlletter, a newletter that only shares positive, uplifting news",
-        tag: "Technology",
-        username: "TonyStark",
-        date: "2022-01-02"
-    },
-
-    {
-        id: 2,
-        text: "Milk carton that turn a different color the older that your milk is getting",
-        tag: "Inventions",
-        username: "SteveRogers",
-        date: "2022-01-02",
-    },
-
-    {
-        id: 3,
-        text: "A website that allows you to see what your friends are doing in real time",
-        tag: "Software",
-        username: "BruceBanner",
-        date: "2022-01-02",
-    },
-]
+//body parser middleware
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
 
 app.get("/", (req, res) => {
     res.json({ message: "Welcome to the RandomIdeas API" })
 })
 
-// get all ideas
-app.get("/api/ideas", (req, res) => {
-    res.json({
-        success: true,
-        data: ideas
-    })
-})
 
-app.get("/api/ideas/:id", (req, res) => {
-    const idea = ideas.find((idea) => idea.id === +req.params.id)
+app.use('/api/ideas', ideasRouter)
 
-    if (!idea)
-    {
-        return res.status(404).json({
-            success: false,
-            error: "Resource not found "
-        })
-    }
-    res.json({
-        success: true,
-        data: idea
-    })
-})
+
 
 
 app.listen(port, () => console.log(`Server listening on port ${port}`))
