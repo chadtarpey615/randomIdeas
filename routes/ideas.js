@@ -1,90 +1,87 @@
 const express = require('express');
 const router = express.Router();
+const Idea = require('../models/Idea');
 
-const ideas = [
-    {
-        id: 1,
-        text: "Positive Newlletter, a newletter that only shares positive, uplifting news",
-        tag: "Technology",
-        username: "TonyStark",
-        date: "2022-01-02"
-    },
-
-    {
-        id: 2,
-        text: "Milk carton that turn a different color the older that your milk is getting",
-        tag: "Inventions",
-        username: "SteveRogers",
-        date: "2022-01-02",
-    },
-
-    {
-        id: 3,
-        text: "A website that allows you to see what your friends are doing in real time",
-        tag: "Software",
-        username: "BruceBanner",
-        date: "2022-01-02",
-    },
-]
 // get all ideas
-router.get("/", (req, res) => {
-    res.json({
-        success: true,
-        data: ideas
-    })
+router.get("/", async (req, res) => {
+    try
+    {
+        const ideas = await Idea.find()
+        res.json({ success: true, data: ideas })
+    } catch (error)
+    {
+        res.status(500).json({ success: false, error: error.message })
+    }
 })
 
 
 // get single idea
-router.get("/:id", (req, res) => {
-    const idea = ideas.find((idea) => idea.id === +req.params.id)
-
-    if (!idea)
+router.get("/:id", async (req, res) => {
+    try
     {
-        return res.status(404).json({
-            success: false,
-            error: "Resource not found "
+        const idea = await Idea.findById(req.params.id)
+
+
+        res.json({
+            success: true,
+            data: idea
         })
     }
-    res.json({
-        success: true,
-        data: idea
-    })
+
+    catch (error)
+    {
+        res.status(500).json({ success: false, error: error.message })
+    }
 })
 
 
 // create idea
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
     const { text, tag, username } = req.body
-    const idea = {
-        id: ideas.length + 1,
+
+    const idea = new Idea({
+        // id: ideas.length + 1,
         text: text,
         tag: tag,
-        username: username,
-        date: new Date().toISOString().slice(0, 10)
-    }
+        username: username
+    })
 
-    ideas.push(idea)
-    res.json({ success: true, data: idea })
+    try
+    {
+        const savedIdea = await idea.save()
+        res.json({ success: true, data: savedIdea })
+    } catch (error)
+    {
+        console.log(error)
+        res.status(500).json({ success: false, error: error.message })
+    }
 })
+
 
 
 // update idea
 
-router.put("/:id", (req, res) => {
-    const idea = ideas.find((idea) => idea.id === +req.params.id)
-
-    if (!idea)
+router.put("/:id", async (req, res) => {
+    try
     {
-        return res.status(404).json({
-            success: false,
-            error: "Resource not found "
-        })
-    }
+        const updatedIdea = await Idea.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: {
+                    text: req.body.text,
+                    tag: req.body.tag,
+                }
+            },
 
-    idea.text = req.body.text || idea.text
-    idea.tag = req.body.tag || idea.tag
-    res.json({ success: true, data: idea })
+            { new: true }
+        )
+        res.json({ success: true, data: updatedIdea })
+
+    } catch (error)
+    {
+        console.log(error)
+        res.status(500).json({ success: false, error: error.message })
+    }
 })
 
 
@@ -93,21 +90,18 @@ router.put("/:id", (req, res) => {
 
 // delete idea
 
-router.delete("/:id", (req, res) => {
-
-    const idea = ideas.find((idea) => idea.id === +req.params.id)
-
-    if (!idea)
+router.delete("/:id", async (req, res) => {
+    try
     {
-        return res.status(404).json({
-            success: false,
-            error: "Resource not found "
-        })
-    }
+        await Idea.findByIdAndDelete(req.params.id)
+        res.json({ success: true, data: {} })
 
-    const index = ideas.indexOf(idea)
-    ideas.splice(index, 1)
-    res.json({ success: true, data: {} })
+    } catch (error)
+    {
+
+        console.log(error)
+        res.status(500).json({ success: false, error: error.message })
+    }
 
 })
 

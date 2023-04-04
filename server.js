@@ -1,7 +1,11 @@
 const express = require("express")
-const port = 5000
+require("dotenv").config()
+const port = process.env.PORT || 5000
+const connectDb = require("./config/db")
 const app = express()
 const ideasRouter = require("./routes/ideas")
+
+connectDb()
 
 
 //body parser middleware
